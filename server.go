@@ -72,9 +72,14 @@ func handleConn(conn net.Conn) {
 	for input.Scan() {
 		texto := strings.Split(input.Text(), " ")
 		if texto[0] == "/trocarNick" {
-			messages <- apelido + " tornou-se: " + texto[1]
-			apelido = texto[1]
-			canal[apelido] = ch
+			if texto[1] == "Bot" {
+				ch <- "Nome inválido"
+			} else {
+				messages <- apelido + " tornou-se: " + texto[1]
+				apelido = texto[1]
+				canal[apelido] = ch
+			}
+
 		} else if texto[0] == "/sair" {
 			leaving <- ch
 			messages <- apelido + " se foi "

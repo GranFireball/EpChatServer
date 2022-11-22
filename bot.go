@@ -41,6 +41,6 @@ func main() {
 }
 
 func bot(cont *sync.WaitGroup, conn net.Conn) {
-	conn.Write([]byte("Bot: "))
+	conn.Write([]byte("Bot"))
 	defer cont.Done()
 }
