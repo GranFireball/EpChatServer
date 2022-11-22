@@ -40,7 +40,6 @@ func broadcaster() {
 			//message := msgPrivate[3]
 			msgEnv := false
 			msgRev := ""
-
 			for cli, _ := range clients {
 				if msgEnv == false {
 					if cli == canal[texto[2]] && texto[2] != "Bot" {
@@ -53,7 +52,6 @@ func broadcaster() {
 					}
 				}
 			}
-
 		}
 	}
 }
@@ -77,7 +75,7 @@ func handleConn(conn net.Conn) {
 	for input.Scan() {
 		texto := strings.Split(input.Text(), " ")
 		if texto[0] == "/trocarNick" {
-			messages <- apelido + "tornou-se" + texto[1]
+			messages <- apelido + " tornou-se: " + texto[1]
 			apelido = texto[1]
 			canal[apelido] = ch
 		} else if texto[0] == "/sair" {
