@@ -35,16 +35,16 @@ func broadcaster() {
 		case msg := <-msgPV:
 			texto := strings.Split(msg, " ")
 			msgEnv := false
-			msgRev := ""
+			msgBot := ""
 
 			for cli, _ := range clients {
 				if msgEnv == false {
-					if cli == canal[texto[2]] && texto[2] == "Bot" {
-						msgRev = msgInv(texto[3])
-						canal[texto[0]] <- texto[2] + ":" + msgRev
+					if cli == canal[texto[1]] && texto[2] == "Bot" {
+						msgBot = msgInv(texto[3])
+						canal[texto[1]] <- texto[2] + ": " + msgBot
 						msgEnv = true
 					} else if cli == canal[texto[2]] && texto[2] != "Bot" {
-						canal[texto[2]] <- texto[0] + ":" + texto[3]
+						canal[texto[2]] <- texto[1] + ": " + texto[3]
 						msgEnv = true
 					}
 				}
@@ -71,21 +71,22 @@ func handleConn(conn net.Conn) {
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		texto := strings.Split(input.Text(), " ")
-		if texto[0] == "/trocarNick" {
-			if texto[1] == "Bot" {
-				ch <- "Nome inválido"
-			} else {
-				messages <- apelido + " tornou-se: " + texto[1]
-				apelido = texto[1]
-				canal[apelido] = ch
-			}
-
+		if apelido == "Bot" {
+			canal[apelido] <- "Você é um Bot! Não Faz Nada!"
+			//Comando trocar Nome, deve ser digitado: /trocarNick Nome
+		} else if texto[0] == "/trocarNick" {
+			messages <- apelido + " tornou-se: " + texto[1]
+			apelido = texto[1]
+			canal[apelido] = ch
+			//Comando Sair, deve ser digitado: /sair
 		} else if texto[0] == "/sair" {
 			leaving <- ch
 			messages <- apelido + " se foi "
 			return
+			//Comando mensagem Privada, deve ser digitado: /msgPV SeuNome NomeDestinatario Mensagem
 		} else if texto[0] == "/msgPV" {
 			msgPV <- apelido + ":" + input.Text()
+			//Para enviar mensagem para todos, basta digitar a mensagem
 		} else {
 			messages <- apelido + ":" + input.Text()
 		}
