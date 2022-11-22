@@ -33,21 +33,18 @@ func broadcaster() {
 			delete(clients, cli)
 			close(cli)
 		case msg := <-msgPV:
-			// [0]-transmisor [1]-comando [2]-receptor [3]-mensagem
 			texto := strings.Split(msg, " ")
-			//transmissor := msgPrivate[0]
-			//receptor := msgPrivate[2]
-			//message := msgPrivate[3]
 			msgEnv := false
 			msgRev := ""
+
 			for cli, _ := range clients {
 				if msgEnv == false {
-					if cli == canal[texto[2]] && texto[2] != "Bot" {
-						canal[texto[2]] <- texto[0] + ":" + texto[3]
-						msgEnv = true
-					} else if cli == canal[texto[2]] && texto[2] == "Bot" {
-						msgRev = reverse(texto[3]) //reverse = funcao reverter msg
+					if cli == canal[texto[2]] && texto[2] == "Bot" {
+						msgRev = msgInv(texto[3])
 						canal[texto[0]] <- texto[2] + ":" + msgRev
+						msgEnv = true
+					} else if cli == canal[texto[2]] && texto[2] != "Bot" {
+						canal[texto[2]] <- texto[0] + ":" + texto[3]
 						msgEnv = true
 					}
 				}
@@ -98,7 +95,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	go broadcaster()
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -109,9 +108,9 @@ func main() {
 	}
 }
 
-func reverse(str string) (result string) {
-	for _, v := range str {
-		result = string(v) + result
+func msgInv(texto1 string) (texto2 string) {
+	for _, i := range texto1 {
+		texto2 = string(i) + texto2
 	}
 	return
 }
